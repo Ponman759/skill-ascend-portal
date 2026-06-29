@@ -26,13 +26,13 @@ const Home = () => {
             transition={{ duration: 0.8 }}
           >
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
-              Master In-Demand Tech Skills with Our <span className="text-primary">New Diploma Courses</span>
+              Master In-Demand Tech Skills with Our <span className="text-primary tech-glow">New Diploma Courses</span>
             </h1>
             <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto text-gray-200">
               Elevate your career with Ponman Global's intensive 6-month diploma programs in Cybersecurity, Full-Stack Engineering, AI, and Cloud Computing. Gain industry-recognized certification and market-ready expertise.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" className="w-full sm:w-auto text-lg h-14 px-8" asChild>
+              <Button size="lg" className="w-full sm:w-auto text-lg h-14 px-8 btn-glow" asChild>
                 <Link to="/services">Our Services</Link>
               </Button>
               <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg h-14 px-8 bg-white/10 hover:bg-white/20 border-white/20" asChild>
