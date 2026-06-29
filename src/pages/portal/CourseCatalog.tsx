@@ -11,62 +11,61 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 const CourseCatalog = () => {
   const { courses, enrollInCourse, enrolledCourses } = useCourses();
   const [search, setSearch] = useState('');
-  const [category, setCategory] = useState('All');
   const [typeFilter, setTypeFilter] = useState('all');
 
-  const categories = ['All', ...Array.from(new Set(courses.map(c => c.category)))];
-
   const filteredCourses = courses.filter(c => {
-    const matchesSearch = c.title.toLowerCase().includes(search.toLowerCase()) || 
-    const matchesSearch = c.title.toLowerCase().includes(search.toLowerCase()) || 
+    const matchesSearch = c.title.toLowerCase().includes(search.toLowerCase()) ||
                          c.description.toLowerCase().includes(search.toLowerCase());
-    const matchesCategory = category === 'All' || c.category === category;
-    const matchesType = typeFilter === 'all' || (typeFilter === 'diploma' ? c.isDiploma : (typeFilter === 'professional' ? !c.isDiploma : true));
-    return matchesSearch && matchesCategory && matchesType;
-  });
+    const matchesType = typeFilter === 'all' || 
+                        (typeFilter === 'diploma' ? c.isDiploma : 
+                        (typeFilter === 'professional' ? !c.isDiploma : true));
+    return matchesSearch && matchesType;
   });
 
-      <div className=\"text-center mb-12\">
-        <h1 className=\"text-4xl font-bold mb-4\">Professional Course Catalog</h1>
-        <p className=\"text-muted-foreground max-w-2xl mx-auto\">\n          Gain market-ready skills with our industry-standard IT courses led by expert practitioners.\n        </p>
-      </div>
+  return (
+    <div className="container mx-auto px-4 py-12">
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-bold mb-4">Professional Course Catalog</h1>
+        <p className="text-muted-foreground max-w-2xl mx-auto">
           Gain market-ready skills with our industry-standard IT courses led by expert practitioners.
         </p>
       </div>
 
-      <div className=\"flex flex-col items-center gap-6 mb-12\">\n+        <Tabs value={typeFilter} onValueChange={setTypeFilter} className=\"w-full max-w-2xl\">\n+          <TabsList className=\"grid w-full grid-cols-3\">\n+            <TabsTrigger value=\"all\">All Programs</TabsTrigger>\n+            <TabsTrigger value=\"diploma\">Diploma Programs</TabsTrigger>\n+            <TabsTrigger value=\"professional\">Professional Certs</TabsTrigger>\n+          </TabsList>\n+        </Tabs>\n+      </div>
+      <div className="flex flex-col items-center gap-6 mb-12">
+        <Tabs value={typeFilter} onValueChange={setTypeFilter} className="w-full max-w-2xl">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="all">All Programs</TabsTrigger>
+            <TabsTrigger value="diploma">Diploma Programs</TabsTrigger>
+            <TabsTrigger value="professional">Professional Certs</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
 
-      <div className=\"flex flex-col md:flex-row gap-4 mb-8\">\n         <div className=\"relative flex-1\">\n@@ -70,10 +72,10 @@
-          <Card key={course.id} className=\"flex flex-col hover:shadow-lg transition-all border-none shadow-sm bg-secondary/20 overflow-hidden\">\n             <div className=\"aspect-video w-full overflow-hidden relative\">\n               <img src={course.thumbnail} alt={course.title} className=\"w-full h-full object-cover\" />\n               <Badge className=\"absolute top-3 right-3\">{course.level}</Badge>\n-              <div className=\"absolute top-3 left-3 flex flex-col gap-2\">\n-                {course.isDiploma && <Badge variant=\"secondary\" className=\"bg-primary text-primary-foreground\">Diploma</Badge>}\n-                {course.isNew && <Badge variant=\"destructive\">New Offering</Badge>}\n-              </div>\n+              <div className=\"absolute top-3 left-3 flex flex-wrap gap-2 max-w-[80%]\">\n+                {course.isDiploma && <Badge variant=\"secondary\" className=\"bg-blue-600 hover:bg-blue-700 text-white border-none shadow-sm\">Diploma</Badge>}\n+                {course.isNew && <Badge variant=\"destructive\" className=\"bg-emerald-600 hover:bg-emerald-700 text-white border-none shadow-sm\">New Offering</Badge>}\n+              </div>\n             </div>\n             <CardHeader>\n               <div className=\"flex justify-between items-start mb-2\">\n
+      <div className="flex flex-col md:flex-row gap-4 mb-8">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input 
-            className="pl-10" 
             placeholder="Search courses..." 
+            className="pl-10"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-        </div>
-        <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
-          {categories.map((cat) => (
-            <Button
-              key={cat}
-              variant={category === cat ? 'default' : 'outline'}
-              onClick={() => setCategory(cat)}
-              className="whitespace-nowrap"
-            >
-              {cat}
-            </Button>
-          ))}
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {filteredCourses.map((course) => (
-          <Card key={course.id} className="flex flex-col hover:shadow-lg transition-all border-none shadow-sm bg-secondary/20 overflow-hidden">
-            <div className="aspect-video w-full overflow-hidden relative">
-              <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover" />
-              <Badge className="absolute top-3 right-3">{course.level}</Badge>
+          <Card key={course.id} className="flex flex-col overflow-hidden hover:shadow-xl transition-all duration-300 border-muted/50 group">
+            <div className="aspect-video relative overflow-hidden">
+              <img 
+                src={course.thumbnail} 
+                alt={course.title} 
+                className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="absolute top-3 left-3 flex flex-wrap gap-2">
+                {course.isDiploma && <Badge variant="secondary" className="bg-blue-600 hover:bg-blue-700 text-white border-none shadow-sm">Diploma</Badge>}
+                {course.isNew && <Badge variant="destructive" className="bg-emerald-600 hover:bg-emerald-700 text-white border-none shadow-sm">New Offering</Badge>}
+              </div>
             </div>
             <CardHeader>
               <div className="flex justify-between items-start mb-2">

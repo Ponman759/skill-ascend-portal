@@ -115,6 +115,104 @@ const DEFAULT_COURSES: Course[] = [
       { id: 'ai1', title: 'Introduction to Neural Networks', content: 'Fundamentals of AI.', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ' },
     ],
   },
+  {
+    id: '8',
+    title: 'Diploma in Data Science & Big Data Analytics',
+    description: 'Master data mining, predictive modeling, and big data processing using R, Python, and Spark.',
+    thumbnail: 'https://storage.googleapis.com/dala-prod-public-storage/generated-images/49aba353-0e22-44e0-a31e-02030a6bce7d/course-data-science-diploma-74d50c81-1782730808938.webp',
+    category: 'Data Science',
+    duration: '6 Months',
+    level: 'Advanced',
+    isDiploma: true,
+    isNew: true,
+    lessons: [
+      { id: 'ds1', title: 'Statistical Foundations', content: 'Core statistics for data science.', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ' },
+    ],
+  },
+  {
+    id: '9',
+    title: 'Diploma in Digital Marketing & E-commerce',
+    description: 'Master SEO, SEM, content strategy, and e-commerce platform management to grow businesses online.',
+    thumbnail: 'https://storage.googleapis.com/dala-prod-public-storage/generated-images/49aba353-0e22-44e0-a31e-02030a6bce7d/course-digital-marketing-diploma-dc4e0f4d-1782730809423.webp',
+    category: 'Marketing',
+    duration: '4 Months',
+    level: 'Intermediate',
+    isDiploma: true,
+    isNew: true,
+    lessons: [
+      { id: 'dm1', title: 'Digital Strategy Framework', content: 'Building a marketing funnel.', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ' },
+    ],
+  },
+  {
+    id: '10',
+    title: 'Diploma in IT Support & Systems Administration',
+    description: 'Build a career in IT support, managing Windows/Linux servers, and ensuring business continuity.',
+    thumbnail: 'https://storage.googleapis.com/dala-prod-public-storage/generated-images/49aba353-0e22-44e0-a31e-02030a6bce7d/course-it-support-diploma-8b8d2ff5-1782730808623.webp',
+    category: 'Networking',
+    duration: '5 Months',
+    level: 'Beginner',
+    isDiploma: true,
+    isNew: true,
+    lessons: [
+      { id: 'it1', title: 'Hardware Troubleshooting', content: 'Identifying and fixing hardware issues.', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ' },
+    ],
+  },
+  {
+    id: '11',
+    title: 'Diploma in UI/UX Design & Product Strategy',
+    description: 'Learn to design beautiful, user-centric interfaces and understand product development lifecycles.',
+    thumbnail: 'https://storage.googleapis.com/dala-prod-public-storage/generated-images/49aba353-0e22-44e0-a31e-02030a6bce7d/course-uiux-diploma-0e8d5931-1782730808573.webp',
+    category: 'Design',
+    duration: '4 Months',
+    level: 'Intermediate',
+    isDiploma: true,
+    isNew: true,
+    lessons: [
+      { id: 'ux1', title: 'User Research Methods', content: 'How to conduct effective user interviews.', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ' },
+    ],
+  },
+  {
+    id: '12',
+    title: 'Diploma in Mobile App Development',
+    description: 'Create cross-platform mobile applications for iOS and Android using React Native and Flutter.',
+    thumbnail: 'https://storage.googleapis.com/dala-prod-public-storage/generated-images/49aba353-0e22-44e0-a31e-02030a6bce7d/course-mobile-dev-diploma-adb986c9-1782730809606.webp',
+    category: 'Programming',
+    duration: '6 Months',
+    level: 'Advanced',
+    isDiploma: true,
+    isNew: true,
+    lessons: [
+      { id: 'ma1', title: 'React Native Fundamentals', content: 'Setting up your dev environment.', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ' },
+    ],
+  },
+  {
+    id: '13',
+    title: 'Diploma in Graphics Design & Visual Communication',
+    description: 'Master Adobe Creative Suite and learn the principles of visual storytelling and branding.',
+    thumbnail: 'https://storage.googleapis.com/dala-prod-public-storage/generated-images/49aba353-0e22-44e0-a31e-02030a6bce7d/course-graphics-design-diploma-105efe95-1782730808427.webp',
+    category: 'Design',
+    duration: '5 Months',
+    level: 'Beginner',
+    isDiploma: true,
+    isNew: true,
+    lessons: [
+      { id: 'gd1', title: 'Color Theory & Typography', content: 'Essentials of visual design.', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ' },
+    ],
+  },
+  {
+    id: '14',
+    title: 'Diploma in Blockchain & Smart Contracts',
+    description: 'Explore decentralized finance, blockchain architecture, and develop smart contracts with Solidity.',
+    thumbnail: 'https://storage.googleapis.com/dala-prod-public-storage/generated-images/49aba353-0e22-44e0-a31e-02030a6bce7d/course-blockchain-diploma-d57a14d5-1782730810745.webp',
+    category: 'Programming',
+    duration: '4 Months',
+    level: 'Advanced',
+    isDiploma: true,
+    isNew: true,
+    lessons: [
+      { id: 'bc1', title: 'Introduction to Ethereum', content: 'How blockchain works.', videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ' },
+    ],
+  },
 ];
 
 export const useCourses = () => {
@@ -125,7 +223,16 @@ export const useCourses = () => {
   useEffect(() => {
     const savedCourses = localStorage.getItem('ponman_courses');
     if (savedCourses) {
-      setCourses(JSON.parse(savedCourses));
+      const parsed = JSON.parse(savedCourses);
+      // Ensure any new default courses are added
+      const missing = DEFAULT_COURSES.filter(dc => !parsed.find((pc: Course) => pc.id === dc.id));
+      if (missing.length > 0) {
+        const updated = [...parsed, ...missing];
+        setCourses(updated);
+        localStorage.setItem('ponman_courses', JSON.stringify(updated));
+      } else {
+        setCourses(parsed);
+      }
     } else {
       setCourses(DEFAULT_COURSES);
       localStorage.setItem('ponman_courses', JSON.stringify(DEFAULT_COURSES));

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useCourses, Course, Lesson } from '@/hooks/useCourses';
+import { useCourses, Course } from '@/hooks/useCourses';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -12,7 +12,6 @@ import { Plus, Edit, Trash2, LayoutDashboard, BookOpen, Users } from 'lucide-rea
 import { Checkbox } from '@/components/ui/checkbox';
 
 const AdminDashboard = () => {
-  const { user, isAdmin } = useAuth();
   const { user, isAdmin } = useAuth();
   const { courses, addCourse, updateCourse, deleteCourse } = useCourses();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -29,14 +28,14 @@ const AdminDashboard = () => {
     isNew: false,
   });
 
-  if (!user || !isAdmin) return <Navigate to=\"/login\" />;
-
   if (!user || !isAdmin) return <Navigate to="/login" />;
 
   const handleOpenAdd = () => {
     setEditingCourse(null);
     setFormData({
       title: '',
+      description: '',
+      category: '',
       duration: '5 hours',
       level: 'Beginner',
       thumbnail: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97',
@@ -45,21 +44,15 @@ const AdminDashboard = () => {
     });
     setIsDialogOpen(true);
   };
-      isNew: false,
-    });
-    setIsDialogOpen(true);
-  };
 
   const handleOpenEdit = (course: Course) => {
     setEditingCourse(course);
+    setFormData({
+      title: course.title,
+      description: course.description,
+      category: course.category,
       duration: course.duration,
       level: course.level,
-      thumbnail: course.thumbnail,
-      isDiploma: !!course.isDiploma,
-      isNew: !!course.isNew,
-    });
-    setIsDialogOpen(true);
-  };
       thumbnail: course.thumbnail,
       isDiploma: !!course.isDiploma,
       isNew: !!course.isNew,
@@ -108,17 +101,40 @@ const AdminDashboard = () => {
                 <div className="grid gap-2">
                   <label className="text-sm font-medium">Category</label>
                   <Input value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} required />
-                <label className=\"text-sm font-medium\">Thumbnail URL</label>
-                <Input value={formData.thumbnail} onChange={e => setFormData({...formData, thumbnail: e.target.value})} required />
-              </div>
-              <div className=\"flex items-center space-x-4 pt-2\">\n+                <div className=\"flex items-center space-x-2\">\n+                  <Checkbox \n+                    id=\"isDiploma\" \n+                    checked={formData.isDiploma} \n+                    onCheckedChange={(checked) => setFormData({...formData, isDiploma: !!checked})} \n+                  />\n+                  <label htmlFor=\"isDiploma\" className=\"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70\">\n+                    Diploma Course\n+                  </label>\n+                </div>\n+                <div className=\"flex items-center space-x-2\">\n+                  <Checkbox \n+                    id=\"isNew\" \n+                    checked={formData.isNew} \n+                    onCheckedChange={(checked) => setFormData({...formData, isNew: !!checked})} \n+                  />\n+                  <label htmlFor=\"isNew\" className=\"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70\">\n+                    New Offering\n+                  </label>\n+                </div>\n+              </div>\n               <DialogFooter>
-                <Button type=\"submit\">{editingCourse ? 'Save Changes' : 'Add Course'}</Button>
-              </DialogFooter>
+                </div>
+                <div className="grid gap-2">
+                  <label className="text-sm font-medium">Duration</label>
+                  <Input value={formData.duration} onChange={e => setFormData({...formData, duration: e.target.value})} required />
+                </div>
               </div>
               <div className="grid gap-2">
                 <label className="text-sm font-medium">Thumbnail URL</label>
                 <Input value={formData.thumbnail} onChange={e => setFormData({...formData, thumbnail: e.target.value})} required />
               </div>
+              
+              <div className="flex items-center space-x-4 pt-2">
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="isDiploma" 
+                    checked={formData.isDiploma} 
+                    onCheckedChange={(checked) => setFormData({...formData, isDiploma: !!checked})} 
+                  />
+                  <label htmlFor="isDiploma" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Diploma Course
+                  </label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="isNew" 
+                    checked={formData.isNew} 
+                    onCheckedChange={(checked) => setFormData({...formData, isNew: !!checked})} 
+                  />
+                  <label htmlFor="isNew" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    New Offering
+                  </label>
+                </div>
+              </div>
+
               <DialogFooter>
                 <Button type="submit">{editingCourse ? 'Save Changes' : 'Add Course'}</Button>
               </DialogFooter>
@@ -153,24 +169,24 @@ const AdminDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">₦2.4M</div>
-                <TableHead>Category</TableHead>
-                <TableHead>Level</TableHead>
-                <TableHead>Lessons</TableHead>
-                <TableHead>Tags</TableHead>
-                <TableHead className=\"text-right\">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
           <CardTitle>Course Management</CardTitle>
           <CardDescription>View, edit, or remove courses from the catalog.</CardDescription>
         </CardHeader>
         <CardContent>
-                  <TableCell>{course.category}</TableCell>
-                  <TableCell>{course.level}</TableCell>
-                  <TableCell>{course.lessons.length}</TableCell>\n+                  <TableCell>\n+                    <div className=\"flex flex-wrap gap-1\">\n+                      {course.isDiploma && <span className=\"text-[10px] bg-primary/10 text-primary px-1 rounded\">Dip</span>}\n+                      {course.isNew && <span className=\"text-[10px] bg-destructive/10 text-destructive px-1 rounded\">New</span>}\n+                    </div>\n+                  </TableCell>\n                   <TableCell className=\"text-right\">
-                    <div className=\"flex justify-end gap-2\">
-                      <Button variant=\"outline\" size=\"icon\" onClick={() => handleOpenEdit(course)}>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Title</TableHead>
+                <TableHead>Category</TableHead>
                 <TableHead>Level</TableHead>
                 <TableHead>Lessons</TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -181,6 +197,12 @@ const AdminDashboard = () => {
                   <TableCell>{course.category}</TableCell>
                   <TableCell>{course.level}</TableCell>
                   <TableCell>{course.lessons.length}</TableCell>
+                  <TableCell>
+                    <div className="flex flex-wrap gap-1">
+                      {course.isDiploma && <span className="text-[10px] bg-primary/10 text-primary px-1 rounded font-semibold">DIPLOMA</span>}
+                      {course.isNew && <span className="text-[10px] bg-emerald-100 text-emerald-700 px-1 rounded font-semibold">NEW</span>}
+                    </div>
+                  </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button variant="outline" size="icon" onClick={() => handleOpenEdit(course)}>

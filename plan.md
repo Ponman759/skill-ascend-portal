@@ -1,61 +1,51 @@
-# Implementation Plan - Ponman Global Computers Limited Website & E-Learning Portal
+# Implementation Plan - Additional Video Content for Learning Portal
 
-Develop a professional corporate website for Ponman Global Computers Limited with a built-in self-paced e-learning portal. Since no server-side database (Supabase/Postgres) is available for this session, all data persistence (user auth, courses, progress) will be handled via `localStorage`.
+The goal is to populate the e-learning portal with additional video content. Since the project currently uses `localStorage` via a custom hook (`src/hooks/useCourses.tsx`) for data persistence, this update will involve modifying the initial seed data and ensuring the UI correctly displays the expanded content.
 
 ## Scope Summary
-- **Corporate Website:** Home, About Us, Services, Contact Us.
-- **E-Learning Portal:** User registration/login, Course Catalog, Course Detail/Learning View, Progress Tracking.
-- **Admin Features:** Course CRUD (Create, Read, Update, Delete) for managing content.
-- **Tech Stack:** React, Tailwind CSS (v4), Lucide React (icons), Shadcn UI components, `localStorage` for persistence.
+- **Data Enrichment:** Update `src/hooks/useCourses.tsx` with a broader range of video-based course content.
+- **Course Catalog Update:** Ensure the new content is visible and correctly categorized in `src/pages/portal/CourseCatalog.tsx`.
+- **Course View Update:** Verify that video players in `src/pages/portal/CourseView.tsx` handle the new content correctly.
 
 ## Non-Goals
-- Remote database integration (Supabase/PostgreSQL).
-- Real-time video streaming (will use embed links or placeholders).
-- Payment gateway integration.
+- Migrating to a real database (Supabase is out of scope per the existing `plan.md`).
+- Building new UI features (the focus is on content population).
 
-## Assumptions
-- "Secure" in this context refers to client-side UI protection (protected routes) and simulated authentication.
-- All media content will be hosted externally (e.g., YouTube/Vimeo/Cloudinary) or referenced via URL.
-- The contact form will simulate submission (log to console/show success message).
+## Auth & RLS model
+**Auth in scope:** No (Handled via client-side `localStorage` logic)
+**Model:** no_auth_controlled_write (Simulated auth in `src/hooks/useAuth.tsx`)
+**RLS strategy:** N/A (Client-side simulation)
+**Frontend implication:** No real security; logic relies on `localStorage` state.
+
+## Migration baseline
+**Local migrations in project:** none
+**User confirmed proceed on connected DB:** not_applicable (Using `localStorage`)
 
 ## Affected Areas
-- `src/App.tsx`: Routing and Global State.
-- `src/components`: Navigation, Footer, Layouts, UI components.
-- `src/pages`: Home, About, Services, Contact, Login, Register, Portal Dashboard, Course View, Admin Dashboard.
-- `src/hooks`: Custom hooks for `localStorage` data management (auth, courses).
+- `src/hooks/useCourses.tsx`: The source of truth for the course data and initial seed state.
+- `src/pages/portal/CourseCatalog.tsx`: Displays the list of courses.
+- `src/pages/portal/CourseView.tsx`: Displays the individual course content/video player.
 
 ---
 
 ## Ordered Phases
 
-### Phase 1: Foundation & Routing
-- Set up React Router for all primary pages.
-- Define a base layout with Navbar and Footer.
+### Phase 1: Content Data Population
+- Modify `src/hooks/useCourses.tsx` to include additional course objects.
+- Each course should have:
+    - Unique ID.
+    - Professional title (focused on high-tech/diploma topics).
+    - Description.
+    - Category (e.g., "Diploma", "Certification").
+    - Thumbnail URL (placeholders like Unsplash).
+    - Video URL (YouTube/Vimeo embed links or placeholders).
+    - Lessons/Modules structure.
 - **Owner:** `frontend_engineer`
 
-### Phase 2: Corporate Pages (Static/Marketing)
-- Build Home (Hero, Featured Services, CTA).
-- Build About Us (Company profile, Mission/Vision).
-- Build Services (List of IT services).
-- Build Contact Us (Information and functional-looking form).
-- **Owner:** `frontend_engineer`
-
-### Phase 3: Auth & Data Mocking (Client-side)
-- Implement `useAuth` hook and `useCourses` hook using `localStorage`.
-- Build Login and Registration pages.
-- Create initial seed data for the course catalog.
-- **Owner:** `frontend_engineer`
-
-### Phase 4: E-Learning Portal (User View)
-- Build Portal Dashboard (Enrolled courses, progress overview).
-- Build Course Catalog (Filterable list of available courses).
-- Build Course Player/Learning View (Sidebar navigation, video/text content delivery).
-- **Owner:** `frontend_engineer`
-
-### Phase 5: Admin Management & Polishing
-- Build Admin Dashboard for Course CRUD operations.
-- Final CSS/UI refinements for responsiveness.
-- **Owner:** `frontend_engineer` (for CRUD logic/UI) or `quick_fix_engineer` (for polish).
+### Phase 2: UI Verification & Polish
+- Check `CourseCatalog.tsx` to ensure layout handles the increased number of items gracefully (grid/pagination/scroll).
+- Check `CourseView.tsx` to ensure the video player correctly renders the new video URLs.
+- **Owner:** `quick_fix_engineer`
 
 ---
 
@@ -64,33 +54,31 @@ Develop a professional corporate website for Ponman Global Computers Limited wit
 **Plan status:** ready
 
 **Dispatch order:**
-1. frontend_engineer — Foundation, Routing, and Corporate UI.
-2. frontend_engineer — E-learning portal logic and Admin CRUD.
+1. frontend_engineer — Populate additional course data in the hook.
+2. quick_fix_engineer — Verify UI rendering and fix minor layout issues.
 
 **Per-agent instructions:**
 
 ### 1. frontend_engineer
-- **Phases:** 1, 2, 3, 4, 5
-- **Scope:**
-    - Initialize routing in `src/App.tsx` using `react-router-dom`.
-    - Create professional UI components for the corporate site (Home, About, Services, Contact).
-    - Create a mock Auth system using `localStorage` to handle "Login/Register".
-    - Build the E-learning portal: Course listing, Course details (video embeds), and Progress tracking (saved to local storage).
-    - Build an Admin interface to allow adding/editing courses in the local state.
-- **Files:** `src/App.tsx`, `src/pages/*`, `src/components/*`, `src/hooks/*`.
+- **Phases:** 1
+- **Scope:** 
+    - Read `src/hooks/useCourses.tsx`.
+    - Update the `INITIAL_COURSES` or seed logic to add at least 5-8 new courses.
+    - Focus on "Diploma in Software Engineering", "Data Science Professional", "Cloud Computing Specialist", etc.
+    - Ensure video URLs are valid embed links or consistent placeholders.
+- **Files:** `src/hooks/useCourses.tsx`
 - **Depends on:** none
-- **Acceptance criteria:**
-    - Responsive design on all pages.
-    - User can "register", "login", and see a personalized dashboard.
-    - User can "enroll" in a course and see progress update.
-    - Admin can add a new course title/description/video-url which then appears in the catalog.
-    - Contact form shows a success toast on "submit".
+- **Acceptance criteria:** The `useCourses` hook returns a larger set of data.
 
 ### 2. quick_fix_engineer
-- **Scope:** Post-implementation polish.
-- **Files:** `src/index.css`, `src/components/ui/*`.
-- **Depends on:** frontend_engineer finishing the core portal.
-- **Acceptance criteria:** Consistent spacing, typography checks, and fixing any mobile layout overflows.
+- **Phases:** 2
+- **Scope:** 
+    - Review `src/pages/portal/CourseCatalog.tsx` and `src/pages/portal/CourseView.tsx`.
+    - Ensure the course grid is responsive and looks good with many items.
+    - Fix any broken image/video placeholders if they appear.
+- **Files:** `src/pages/portal/CourseCatalog.tsx`, `src/pages/portal/CourseView.tsx`
+- **Depends on:** Phase 1
+- **Acceptance criteria:** Catalog page displays all new courses without layout breaking.
 
 **Do not dispatch:**
-- supabase_engineer (No database access in this session).
+- supabase_engineer (Project remains localStorage-based).
